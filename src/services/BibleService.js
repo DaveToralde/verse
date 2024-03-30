@@ -50,6 +50,7 @@ class BibleService {
             BibleService.instance = this
         }
         this.bible = {}
+        this.verseAddressRegex = verseAddressRegex
         return BibleService.instance
     }
 

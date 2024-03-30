@@ -4,7 +4,7 @@
       <span class="arrow left unselectable" v-on:click="onClickLeft()">◄</span>
       <span class="arrow right unselectable" v-on:click="onClickRight()">►</span>
       <span id="verseTitle" ref="verseTitle" v-on:click="onClickTitle" @blur="onBlurTitle" @keydown.enter="onEnterTitle"
-        @keydown="handleKeyDown">
+        @keydown="handleKeyDown" @paste="onPasteVerseAddress">
         {{ verseDetails.title }}
       </span>
     </span>
@@ -29,6 +29,7 @@
 import { mapState } from 'vuex';
 import { uiMixin } from "@/mixins/uiMixin.js"
 import { EventBus } from '@/utils/eventBus.js';
+import BibleService from '@/services/BibleService.js'
 
 export default {
   name: 'VerseTitleAndVersion',
@@ -36,7 +37,6 @@ export default {
   props: ['verseDetails'],
   data: function () {
     return {
-      selectedVersion: "",
       isSelectingVersion: false,
       isDropdownVisible: false,
     }
@@ -135,7 +135,23 @@ export default {
           event.stopPropagation()
           break
       }
-    }
+    },
+    onPasteVerseAddress(e) {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0) || document.createRange();
+      range.deleteContents();
+      range.insertNode(document.createTextNode(text));
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+
+      if (text.match(BibleService.verseAddressRegex)) {
+        this.$store.dispatch('verseEnteredNoVersion', text)
+      }
+    },
   }
 }
 
@@ -153,8 +169,6 @@ export default {
   text-transform: uppercase;
   font-size: clamp(0.1rem, 2.3vw + 2.3vh, 3.6rem);
 }
-
-
 
 .verse-container {
   position: relative;
