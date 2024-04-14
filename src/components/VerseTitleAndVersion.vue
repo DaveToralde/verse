@@ -57,6 +57,7 @@ export default {
   watch: {
     verseDetails(value) {
       this.$refs.verseTitle.innerText = value.title
+      this.$refs.verseTitle.blur()
       this.$refs.verseVersion.innerText = value.version
     }
   },
@@ -146,7 +147,6 @@ export default {
       range.collapse(false);
       selection.removeAllRanges();
       selection.addRange(range);
-
 
       if (text.match(BibleService.verseAddressRegex)) {
         this.$store.dispatch('verseEnteredNoVersion', text)

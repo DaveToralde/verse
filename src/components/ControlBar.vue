@@ -144,15 +144,22 @@ export default {
             toggleButton.style.transition = "transform 0.3s ease";
 
             if (isVisible) {
-                controls.classList.remove('controls-hidden');
-                toggleButton.style.transform = 'rotateY(0deg)';
-                toggleButton.style.color = 'rgba(255, 255, 255, 0.8)';
+                controls.style.display = ''; // Reset display to default or block if necessary
+                setTimeout(function () { // Delay to allow display change to render
+                    controls.classList.remove('controls-hidden');
+                    toggleButton.style.transform = 'rotateY(0deg)';
+                    toggleButton.style.color = 'rgba(255, 255, 255, 0.8)';
+                }, 10); // Short delay to re-enable transitions if display was none
             } else {
                 controls.classList.add('controls-hidden');
                 toggleButton.style.transform = 'rotateY(180deg)';
-                toggleButton.style.color = 'rgba(255, 255, 255, 0.5)';
+                toggleButton.style.color = 'rgba(255, 255, 255, 0.4)';
+                setTimeout(function () {
+                    controls.style.display = 'none'; // Apply display none after transitions
+                }, 300); // Delay to match transition duration
             }
         }
+
     },
     methods: {
         onClickGo() {
