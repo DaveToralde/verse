@@ -11,6 +11,7 @@ import { mapState } from 'vuex'
 import { utils } from '@/utils/utils.js'
 import { backgroundService } from '@/services/BackgroundService.js'
 
+import { defaultBg } from './ControlBar.vue' // Workaround
 
 export default {
 
@@ -34,11 +35,7 @@ export default {
             }
         },
         isAddTextBg: function () {
-            if (this.isAddTextBg == false) {
-                document.getElementById('textShade').style.background = ''
-            } else {
-                document.getElementById('textShade').style.background = '#00000099'
-            }
+            this.applyTextBg()
         },
         bgImageCustomUrl: function (newVal) {
             if (this.selectedBg == backgroundService.BG_CUSTOM_URL) {
@@ -60,10 +57,21 @@ export default {
             body.style.backgroundSize = '100% 100%'
             body.style.overflow = 'hidden'
 
+            this.applyTextBg()
+
             this.$store.dispatch('updateErrorDisplay', "") // clear error message
 
             if (this.selectedBg == backgroundService.BG_CUSTOM_URL) {
                 this.$store.dispatch('saveBgImageCustomUrl', url)
+            }
+        },
+        applyTextBg() {
+            if (this.selectedBg == backgroundService.BG_CUSTOM_URL && this.isAddTextBg == false) {
+                document.getElementById('textShade').style.background = ''
+            } else if (this.selectedBg == defaultBg) { // TODO: Right solution instead of temporary Workaround (alpha should be associated with the selected background drop down values)
+                document.getElementById('textShade').style.background = '#00000044'
+            } else {
+                document.getElementById('textShade').style.background = '#000000AA'
             }
         },
         async applyCustomBg(url) {

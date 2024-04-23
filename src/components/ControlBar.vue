@@ -20,14 +20,14 @@
                 <a class="button" @click="increaseFontSize(false)">−</a>
                 <a class="button" @click="increaseFontSize(true)">+</a>
             </span>
-            <label class="toggle">
-                <input type="checkbox" v-model="isAddTextBg">
-                <span class="labels" data-on="With Shade" data-off="No Shade"></span>
-            </label>
             <select id="bgSelector" class="selector" v-model="selectedBg">
                 <option v-for="(value, key) in backgrounds" :value="value" v-bind:key="key">{{ key }}</option>
             </select>
             <input id="bgImgCustomUrlInput" v-model="bgImageCustomUrl" />
+            <label id="addTextBgToggle" class="toggle">
+                <input type="checkbox" v-model="isAddTextBg">
+                <span class="labels" data-on="With Shade" data-off="No Shade"></span>
+            </label>
             <span id="errorDisplay">
                 {{ errorDisplay }}
             </span>
@@ -45,6 +45,8 @@ import { backgroundService } from '../services/BackgroundService';
 const BG_CUSTOM_URL = backgroundService.BG_CUSTOM_URL
 const defaultBg = 'blue.jpg'
 
+export { defaultBg }; // Workaround
+
 export default {
     name: 'ControlBar',
     props: [''],
@@ -52,8 +54,8 @@ export default {
         return {
             verseAddressInput: '',
             backgrounds: { // TODO: Move these to Vuex store and apply defaulting logic there to avoid bugs
-                'Blue BG': defaultBg,
-                'Brown BG': 'brown.jpg',
+                'Blue': defaultBg,
+                'Brown': 'brown.jpg',
                 'Orange': 'orange.jpg',
                 'White': 'white.jpg',
                 'Image URL': BG_CUSTOM_URL
@@ -126,6 +128,11 @@ export default {
             this.showCustomUrlInput(newVal == BG_CUSTOM_URL)
             if (utils.isEmpty(newVal)) {
                 this.selectedBg = defaultBg
+            }
+            if (this.selectedBg == BG_CUSTOM_URL) {
+                document.getElementById('addTextBgToggle').style.display = 'inline-block'
+            } else {
+                document.getElementById('addTextBgToggle').style.display = 'none'
             }
         },
         errorDisplay: function (newVal) {
